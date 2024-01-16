@@ -11,16 +11,19 @@ namespace CodeChallenge.Services
     public class CompensationService : ICompensationService
     {
         private readonly ICompensationRepository _compensationRepository;
+        private readonly IEmployeeService _employeeService;
         private readonly ILogger<CompensationService> _logger;
 
-        public CompensationService(ILogger<CompensationService> logger, ICompensationRepository compensationRepository)
+        public CompensationService(ILogger<CompensationService> logger, ICompensationRepository compensationRepository, IEmployeeService employeeService)
         {
             _compensationRepository = compensationRepository;
+            _employeeService = employeeService;
             _logger = logger;
         }
 
         public Compensation Create(Compensation compensation)
         {
+            if (_employeeService.GetById(compensation.EmployeeId) == null) throw new ArgumentException("Requested EmployeeId does not exist");
             if(compensation != null)
             {
                 _compensationRepository.Add(compensation);
